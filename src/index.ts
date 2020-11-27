@@ -31,7 +31,7 @@ writer.arguments('write').action((args) => {
     writer.invoke();
 });
 
-app.version('v1.0.0', '-v, --version', 'Display version')
+app.version('v0.0.1', '-v, --version', 'Display version')
     .helpOption('-h, --help', 'Display help')
     .option('-s, --source <source>', 'Source location', '.')
     .option('-t, --typescript', 'Use Typescript (tsx)')
