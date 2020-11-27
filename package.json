@@ -1,7 +1,7 @@
 {
-    "name": "css-to-jss",
+    "name": "@bbon/css-to-jss",
     "version": "1.0.0",
-    "description": "Convert css file to jss file.",
+    "description": "Make JSS file from CSS file",
     "main": "dist/index.js",
     "bin": {
         "css-to-jss": "./dist/index.js"
@@ -22,7 +22,12 @@
     "author": "Pon Cheol Ku <dev@bbon.kr> (http://bbon.kr)",
     "repository": {
         "type": "git",
-        "url": ""
+        "url": "https://github.com/bbonkr/css-to-jss.git"
+    },
+    "homepage": "https://github.com/bbonkr/css-to-jss",
+    "bugs": {
+        "url": "https://github.com/bbonkr/css-to-jss/issues",
+        "email": "app@bbon.kr"
     },
     "license": "MIT",
     "devDependencies": {
