@@ -9,8 +9,6 @@ export class ListAction extends ActionBase {
 
     public invoke(): void {
         this.printInfo();
-
-        // eslint-disable-next-line no-console
-        console.info('');
+        this.print('');
     }
 }

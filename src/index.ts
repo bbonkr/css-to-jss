@@ -8,13 +8,16 @@ import { WriteAction } from './WriteAction';
 const app = new Command('css-to-jss');
 
 const listCommand = new Command('list');
-
 listCommand
     .arguments('list <source> [prefix]')
-    .description('Check the list of files to be processing.')
+    .description('Check the list of files to be processing.', {
+        source: '[Required] Set to start location where css files search.',
+        prefix:
+            '[Optional] Set react component file name postfix when files search. default: "style"',
+    })
     .option('-f, --force', 'Overwrite file')
     .option('-t, --typescript', 'Use Typescript (tsx)')
-    .option('-l, --local', 'Does not explore recursive in current directory.')
+    .option('-r, --recursive', 'Explore recursive from current directory.')
     .option('--verbose', 'Display detailed information.')
     .option('--debug', 'Display debug information')
     .action(() => {
@@ -33,10 +36,14 @@ listCommand
 const writerCommand = new Command('write');
 writerCommand
     .arguments('write <source> [prefix]')
-    .description('Make JSS component file from CSS file.')
+    .description('Make JSS component file from CSS file.', {
+        source: '[Required] Set to start location where css files search.',
+        prefix:
+            '[Optional] Set react component file name postfix when files create. default: "style"',
+    })
     .option('-f, --force', 'Overwrite file')
     .option('-t, --typescript', 'Use Typescript (tsx)')
-    .option('-l, --local', 'Does not explore recursive in current directory.')
+    .option('-r, --recursive', 'Explore recursive from current directory.')
     .option('--verbose', 'Display detailed information.')
     .option('--debug', 'Display debug information')
     .action(() => {
@@ -52,11 +59,10 @@ writerCommand
         writer.invoke();
     });
 
-app.version('v1.0.0', '-v, --version', 'Display version')
+app.version('v1.1.0', '-v, --version', 'Display version')
     .description('Make JSS React Component from CSS files.')
     .helpOption(false)
     .allowUnknownOption(false)
-
     .addCommand(listCommand)
     .addCommand(writerCommand)
     .addHelpCommand('help', 'Display help for css-to-jss')
@@ -64,7 +70,6 @@ app.version('v1.0.0', '-v, --version', 'Display version')
 
 if (process.argv.length === 0) {
     app.exitOverride().help();
-    process.exit(0);
 }
 
 export default app;
