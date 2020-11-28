@@ -1,6 +1,6 @@
 # CSS to JSS
 
-[![npm version](https://badge.fury.io/js/%40bbon%2Fcss-to-jss.svg)](https://www.npmjs.com/package/@bbon/css-to-jss)
+[![npm version](https://badge.fury.io/js/%40bbon%2Fcss-to-jss.svg)](https://www.npmjs.com/package/@bbon/css-to-jss) ![npm-publish](https://github.com/bbonkr/css-to-jss/workflows/npm-publish/badge.svg?branch=release)
 
 Makr JSS file from CSS file in your project.
 
