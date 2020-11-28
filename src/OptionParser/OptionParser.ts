@@ -1,6 +1,7 @@
 import { ActionBaseOptions } from '../ActionBase';
 
 interface CommandOptions {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
 }
 
@@ -9,7 +10,7 @@ export class OptionParser {
         commandArguments: string[],
         commandOptions: CommandOptions,
     ): ActionBaseOptions {
-        const { force, typescript, local, verbose, debug } = commandOptions;
+        const { force, typescript, recursive, verbose, debug } = commandOptions;
         const sourceDirectory =
             commandArguments.length > 0 ? commandArguments[0] : '';
         const postfix =
@@ -17,10 +18,10 @@ export class OptionParser {
 
         const options: ActionBaseOptions = {
             source: sourceDirectory,
-            postfix: postfix,
+            postfix: postfix ?? '',
             force: force,
             useTypescript: Boolean(typescript),
-            localOnly: Boolean(local),
+            useRecursive: Boolean(recursive),
             useVerbose: Boolean(verbose),
             useDebug: Boolean(debug),
         };

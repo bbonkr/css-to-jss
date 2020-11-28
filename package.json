@@ -1,6 +1,6 @@
 {
     "name": "@bbon/css-to-jss",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Make JSS file from CSS file",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -32,6 +32,7 @@
     },
     "license": "MIT",
     "dependencies": {
+        "camelcase": "^6.2.0",
         "commander": "^6.2.0",
         "glob": "^7.1.6",
         "progress": "^2.0.3"

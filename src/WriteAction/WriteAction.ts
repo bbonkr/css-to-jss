@@ -1,23 +1,57 @@
 import fs from 'fs';
 import path from 'path';
+import camelCase from 'camelcase';
 
 import { ActionBase, ActionBaseOptions } from '../ActionBase';
 import Progress from 'progress';
 
 interface ProcessedFile {
+    /**
+     * css file path
+     */
     cssFile: string;
+    /**
+     * jsx|tsx file path
+     */
     jssFile: string;
+    /**
+     * is done
+     */
     done: boolean;
+    /**
+     * error
+     */
     error?: Error;
+}
+
+interface JssFileInfo {
+    /**
+     * jsx|tsx file path
+     */
+    filename: string;
+    /**
+     * jss component code
+     */
+    content: string;
 }
 
 type WriteActionOptions = ActionBaseOptions;
 
+/**
+ * Write action
+ *
+ * @export
+ * @class WriteAction
+ * @extends {ActionBase}
+ */
 export class WriteAction extends ActionBase {
     constructor(options?: WriteActionOptions) {
         super(options);
     }
 
+    /**
+     * run write file.
+     */
     public invoke(): void {
         const { force, useVerbose } = this.getOptions();
         const processedFiles: ProcessedFile[] = [];
@@ -26,28 +60,28 @@ export class WriteAction extends ActionBase {
         let writeCount = 0;
 
         this.printInfo();
+        this.print('');
 
-        // eslint-disable-next-line no-console
-        console.info('');
-
-        const progress = new Progress('Progress (:percent): [:bar]', {
-            total: this.getTargetFileCount(),
-            complete: '=',
-            incomplete: ' ',
-            width: 60,
-        });
-
-        if (useVerbose) {
-            // eslint-disable-next-line no-console
-            console.info('');
-        }
+        const progress = new Progress(
+            `${'Progress:'.padEnd(this.MESSAGE_KEY_WIDTH, ' ')} [:bar]`,
+            {
+                total: this.getTargetFileCount(),
+                complete: '=',
+                incomplete: ' ',
+                width:
+                    this.CONSOLE_WIDTH_MAX - this.MESSAGE_KEY_WIDTH - (1 + 2),
+                clear: true,
+            },
+        );
 
         this.getCssFiles().forEach((cssFile) => {
             const needsToWrite = force || !this.isJssExists(cssFile);
 
             if (needsToWrite) {
-                const jssContent = this.getJssContent(cssFile);
-                const jssFilename = this.getJssFileName(cssFile);
+                const {
+                    filename: jssFilename,
+                    content: jssContent,
+                } = this.getJssContent(cssFile);
 
                 try {
                     fs.writeFileSync(jssFilename, jssContent, {
@@ -75,70 +109,68 @@ export class WriteAction extends ActionBase {
             progress.tick(1);
         });
 
-        // progress.complete = true;
+        this.print('-'.padEnd(80, '-'));
+        this.print('Result:');
+        this.print('-'.padEnd(80, '-'));
+        this.print(
+            'Process files:'.padEnd(this.MESSAGE_KEY_WIDTH, ' '),
+            processCount,
+        );
+        this.print(
+            'Write files:'.padEnd(this.MESSAGE_KEY_WIDTH, ' '),
+            writeCount,
+        );
+        this.print('');
 
-        // eslint-disable-next-line no-console
-        console.info('');
-        // eslint-disable-next-line no-console
-        console.info('-'.padEnd(80, '-'));
-        // eslint-disable-next-line no-console
-        console.info('Result:');
-        // eslint-disable-next-line no-console
-        console.info('-'.padEnd(80, '-'));
-        // eslint-disable-next-line no-console
-        console.info('Process files:      ', processCount);
-        // eslint-disable-next-line no-console
-        console.info('Write files:        ', writeCount);
-        // eslint-disable-next-line no-console
-        console.info('');
+        const printCandidate = processedFiles.filter(
+            (x) => useVerbose || (!useVerbose && !x.done),
+        );
 
-        if (useVerbose) {
-            processedFiles.forEach((file) => {
-                // eslint-disable-next-line no-console
-                console.info(
-                    `[${processCount + 1}] ${file.done ? '✅' : '❌'} ${
-                        file.cssFile
-                    } ➡ ${file.jssFile}`,
-                );
-            });
-        } else {
-            if (processedFiles.filter((x) => !x.done).length > 0) {
-                // eslint-disable-next-line no-console
-                console.info('Fail files:    ', processedFiles.length);
-                processedFiles
-                    .filter((x) => !x.done)
-                    .forEach((file) => {
-                        // eslint-disable-next-line no-console
-                        console.info(
-                            `[${processCount + 1}] ${file.done ? '✅' : '❌'} ${
-                                file.cssFile
-                            } ➡ ${file.jssFile}`,
-                        );
-                    });
-            }
+        if (!useVerbose && printCandidate.length > 0) {
+            this.print(
+                'Fail files:'.padEnd(this.MESSAGE_KEY_WIDTH, ' '),
+                processedFiles.length,
+            );
         }
 
-        // eslint-disable-next-line no-console
-        console.info('');
+        printCandidate.forEach((file, index) => {
+            this.print(
+                `[${index + 1}] ${file.done ? '✅' : '❌'} ${path.dirname(
+                    file.cssFile,
+                )}: ${path.basename(file.cssFile)} ➡ ${path.basename(
+                    file.jssFile,
+                )}`,
+            );
+        });
+
+        this.print('');
     }
 
-    private getJssContent(cssFileName: string): string {
-        const { postfix } = this.getOptions();
+    /**
+     * JSS component content
+     *
+     * @private
+     * @param {string} cssFileName
+     * @returns {JssFileInfo}
+     * @memberof WriteAction
+     */
+    private getJssContent(cssFileName: string): JssFileInfo {
+        const jssFilename = this.getJssFileName(cssFileName);
 
         const css = fs.readFileSync(cssFileName);
-        const basename = this.getCapitalCase(
-            this.getFilenameWithoutExtension(path.basename(cssFileName)),
+        const basename = this.getFilenameWithoutExtension(
+            path.basename(jssFilename),
         );
-        const componentName = `${basename}${this.getCapitalCase(
-            postfix ?? this.POSTFIX,
-        )}`;
 
-        return `/**
+        const componentName = camelCase(basename, { pascalCase: true });
+
+        return {
+            filename: jssFilename,
+            content: `/**
  * Auto-generated JSS file by css-to-jss
  * 
  * [@bbon/css-to-jss](https://www.npmjs.com/package/@bbon/css-to-jss)
  */
-
 import React from 'react';
 
 const ${componentName} = () => {
@@ -149,6 +181,7 @@ const ${componentName} = () => {
     )};
 
 export default ${componentName};
-`;
+`,
+        };
     }
 }
