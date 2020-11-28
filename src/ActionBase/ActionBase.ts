@@ -6,6 +6,9 @@ export interface ActionBaseOptions {
     force: boolean;
     postfix?: string;
     useTypescript?: boolean;
+    localOnly?: boolean;
+    useVerbose?: boolean;
+    useDebug?: boolean;
 }
 
 export abstract class ActionBase {
@@ -33,6 +36,13 @@ export abstract class ActionBase {
             };
         }
 
+        if (this.options.useDebug) {
+            // eslint-disable-next-line no-console
+            console.info('css-to-jss Options:');
+            // eslint-disable-next-line no-console
+            console.table(this.options);
+        }
+
         this.cssFiles = [];
         this.jssFiles = [];
 
@@ -40,22 +50,30 @@ export abstract class ActionBase {
     }
 
     private initialize(): void {
-        const { source, force, postfix, useTypescript } = this.options;
-        const rootDir = path.resolve(source);
+        const { postfix, useTypescript, localOnly } = this.options;
+        const rootDir = this.getRootDir();
 
-        const cssFiles = glob.sync('**/*.css', {
-            root: rootDir,
+        const globOptions: glob.IOptions = {
+            cwd: rootDir,
+            absolute: true,
             ignore: ['node_modules/**/*'],
-        });
+        };
+
+        let globPattern = '**/';
+
+        if (localOnly) {
+            globPattern = '';
+        }
+
+        const cssFiles = glob.sync(`${globPattern}*.css`, globOptions);
 
         this.cssFiles = [...cssFiles];
 
         const jssFiles = glob.sync(
-            `**/*.${postfix ?? this.POSTFIX}.${useTypescript ? 'tsx' : 'jsx'}`,
-            {
-                root: rootDir,
-                ignore: ['node_modules/**/*'],
-            },
+            `${globPattern}*.${postfix ?? this.POSTFIX}.${
+                useTypescript ? 'tsx' : 'jsx'
+            }`,
+            globOptions,
         );
 
         const filteredJssFile = jssFiles.filter((file) => {
@@ -74,14 +92,18 @@ export abstract class ActionBase {
     }
 
     protected printInfo(): void {
+        const { useVerbose } = this.options;
         // eslint-disable-next-line no-console
         console.info('-'.padEnd(80, '-'));
         // eslint-disable-next-line no-console
         console.info('Configuration');
         // eslint-disable-next-line no-console
         console.info('-'.padEnd(80, '-'));
+
         // eslint-disable-next-line no-console
         console.info('Root directory:     ', this.getRootDir());
+        // eslint-disable-next-line no-console
+        console.info('Local only:         ', this.getOptions().localOnly);
         // eslint-disable-next-line no-console
         console.info(
             'Use typescript:     ',
@@ -105,6 +127,21 @@ export abstract class ActionBase {
         console.info('JSS already:        ', this.getJssFileCount());
         // eslint-disable-next-line no-console
         console.info('Target files:       ', this.getTargetFileCount());
+
+        if (useVerbose) {
+            // eslint-disable-next-line no-console
+            console.info('');
+            // eslint-disable-next-line no-console
+            console.info('-'.padEnd(80, '-'));
+            // eslint-disable-next-line no-console
+            console.info('CSS files found:');
+            // eslint-disable-next-line no-console
+            console.info('-'.padEnd(80, '-'));
+            this.cssFiles.forEach((cssFile) => {
+                // eslint-disable-next-line no-console
+                console.info(` * ${cssFile}`);
+            });
+        }
     }
 
     protected getFilenameWithoutExtension(filename: string): string {
@@ -122,9 +159,10 @@ export abstract class ActionBase {
     }
 
     protected getJssFileName(cssFilename: string): string {
+        const { postfix, useTypescript } = this.options;
         const jssFilename = `${this.getFilenameWithoutExtension(cssFilename)}.${
-            this.POSTFIX
-        }.${this.getOptions().useTypescript ? 'tsx' : 'jsx'}`;
+            postfix ?? this.POSTFIX
+        }.${useTypescript ? 'tsx' : 'jsx'}`;
 
         return jssFilename;
     }
@@ -152,7 +190,30 @@ export abstract class ActionBase {
         return this.cssFiles.length - (force ? 0 : this.jssFiles.length);
     }
 
-    protected cssFiles: string[];
-    protected jssFiles: string[];
+    protected getCapitalCase(str: string): string {
+        if (!str || str.length === 0) {
+            throw 'Requires 2 characters at least';
+        }
+        if (str.length > 0) {
+            const first = str.substr(0, 1);
+            let remainder = '';
+            if (str.length > 1) {
+                remainder = str.substr(1);
+            }
+            return `${first.toUpperCase()}${remainder}`;
+        }
+        return str;
+    }
+
+    protected getCssFiles(): string[] {
+        return this.cssFiles;
+    }
+
+    protected getJssFiles(): string[] {
+        return this.jssFiles;
+    }
+
+    private cssFiles: string[];
+    private jssFiles: string[];
     private options: ActionBaseOptions;
 }
