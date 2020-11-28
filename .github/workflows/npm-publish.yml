@@ -10,20 +10,25 @@ name: npm-publish
 
 on:
   push:
-    branches: [release]
+    branches:
+      - release
 
 jobs:
   publish:
-    runs-on: ubuntu-lastest
+    name: publish npm package
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - name: Use Node.js 
+        uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: '12.x'
           registry-url: https://registry.npmjs.org/
-      - run: npm install
-      - run: npm run test --if-present
-      - run: npm run build
-      - run: npm publish --access public
+      - name: npm install, test, build, publish
+        run: |
+          npm install
+          npm run test --if-present
+          npm run build
+          npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
