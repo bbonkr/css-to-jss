@@ -97,7 +97,7 @@ And the task will overwrite created TSX files on exists TSX files.
 $ css-to-jss list . style --typescript --recursive --force
 ```
 
-## write command
+### write command
 
 Make JSS file from CSS file.
 
