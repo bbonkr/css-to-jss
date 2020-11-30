@@ -59,7 +59,7 @@ writerCommand
         writer.invoke();
     });
 
-app.version('v1.1.1', '-v, --version', 'Display version')
+app.version('v1.2.0', '-v, --version', 'Display version')
     .description('Make JSS React Component from CSS files.')
     .helpOption(false)
     .allowUnknownOption(false)
