@@ -162,6 +162,7 @@ export class WriteAction extends ActionBase {
             path.basename(jssFilename),
         );
 
+        const cssConstanceName = camelCase(basename, { pascalCase: false });
         const componentName = camelCase(basename, { pascalCase: true });
 
         return {
@@ -170,14 +171,27 @@ export class WriteAction extends ActionBase {
  * Auto-generated JSS file by css-to-jss
  * 
  * [@bbon/css-to-jss](https://www.npmjs.com/package/@bbon/css-to-jss)
+ * 
+ * usage:
+ * \`\`\`
+ * import { ${cssConstanceName} } from './${basename}'
+ *  
+ * <style jsx>{${cssConstanceName}}</style>
+ * \`\`\`
  */
 import React from 'react';
+import css from 'styled-jsx/css'
 
+export const ${cssConstanceName} = css\`
+            ${css}
+\`;
+
+/**
+ * Not working currently
+ */
 const ${componentName} = () => {
     return (
-        <style jsx>{\`
-            ${css}
-        \`}</style>
+        <style jsx>{${cssConstanceName}}</style>
     )};
 
 export default ${componentName};
