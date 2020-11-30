@@ -16,26 +16,37 @@ CSS file looks below.
 
 Then (jsx|tsx) looks like.
 
-```typescript
+````typescript
 /**
  * Auto-generated JSS file by css-to-jss
  *
  * [@bbon/css-to-jss](https://www.npmjs.com/package/@bbon/css-to-jss)
+ *
+ * usage:
+ * ```
+ * import { otherStyle } from './other.style'
+ *
+ * <style jsx>{otherStyle}</style>
+ * ```
  */
 import React from 'react';
+import css from 'styled-jsx/css';
 
+export const otherStyle = css`
+    .sample-css {
+        color: #ffffff;
+    }
+`;
+
+/**
+ * Not working currently
+ */
 const OtherStyle = () => {
-    return (
-        <style jsx>{`
-            .sample-css {
-                color: #ffffff;
-            }
-        `}</style>
-    );
+    return <style jsx>{otherStyle}</style>;
 };
 
 export default OtherStyle;
-```
+````
 
 ## Installation
 
@@ -126,4 +137,55 @@ And overwrite created TSX files on exists TSX files.
 
 ```bash
 $ css-to-jss write . style --typescript --recursive --force
+```
+
+## Execute css-to-jss
+
+### Install globally
+
+Install like this.
+
+```bash
+$ npm i -g @bbon/css-to-jss
+```
+
+Execute like this.
+
+```bash
+$ css-to-jss list src style -t -r
+```
+
+### Install locally
+
+Install like this.
+
+```bash
+$ npm i @bbon/css-to-jss --save-dev
+```
+
+Execute like this.
+
+```bash
+$ npx css-to-jss list src style -t -r
+```
+
+## Usage
+
+import created style.(tsx|jsx) in your component.
+
+> May requires [styled-jsx](https://github.com/vercel/styled-jsx) or [next.js](https://nextjs.org/)
+>
+> Please install @types/styled-jsx package if use typescript with next.js or styled-jsx.
+
+```typescript
+import { otherStyle } from './other.style';
+
+const MyComponent = () => {
+    return (
+        <div className="hello-world">
+            <h1>Hello world!</h1>
+            <style jsx>{otherStyle}</style>
+        </div>
+    );
+};
 ```
