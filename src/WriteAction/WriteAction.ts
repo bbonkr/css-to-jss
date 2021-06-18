@@ -78,10 +78,10 @@ export class WriteAction extends ActionBase {
             const needsToWrite = force || !this.isJssExists(cssFile);
 
             if (needsToWrite) {
-                const {
-                    filename: jssFilename,
-                    content: jssContent,
-                } = this.getJssContent(cssFile);
+                const { filename, content } = this.getJssContent(cssFile);
+
+                const jssFilename = filename;
+                const jssContent = content;
 
                 try {
                     fs.writeFileSync(jssFilename, jssContent, {

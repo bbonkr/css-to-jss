@@ -11,8 +11,7 @@ listCommand
     .arguments('list <source> [prefix]')
     .description('Check the list of files to be processing.', {
         source: '[Required] Set to start location where css files search.',
-        prefix:
-            '[Optional] Set react component file name postfix when files search. default: "style"',
+        prefix: `[Optional] Set react component file name postfix when files search. default: "style"`,
     })
     .option('-f, --force', 'Overwrite file')
     .option('-t, --typescript', 'Use Typescript (tsx)')
@@ -37,8 +36,7 @@ writerCommand
     .arguments('write <source> [prefix]')
     .description('Make JSS component file from CSS file.', {
         source: '[Required] Set to start location where css files search.',
-        prefix:
-            '[Optional] Set react component file name postfix when files create. default: "style"',
+        prefix: `[Optional] Set react component file name postfix when files create. default: "style"`,
     })
     .option('-f, --force', 'Overwrite file')
     .option('-t, --typescript', 'Use Typescript (tsx)')

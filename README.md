@@ -1,6 +1,6 @@
 # CSS to JSS
 
-[![npm version](https://badge.fury.io/js/%40bbon%2Fcss-to-jss.svg)](https://www.npmjs.com/package/@bbon/css-to-jss) [![npm-publish](https://github.com/bbonkr/css-to-jss/workflows/npm-publish/badge.svg?branch=release)](https://github.com/bbonkr/css-to-jss)
+[![](https://shields.io/npm/v/@bbon/css-to-jss)](https://www.npmjs.com/package/@bbon/css-to-jss) [![](https://shields.io/npm/dt/@bbon/css-to-jss)](https://www.npmjs.com/package/@bbon/css-to-jss) [![Build and tag](https://github.com/bbonkr/css-to-jss/actions/workflows/build-and-tag.yml/badge.svg)](https://github.com/bbonkr/css-to-jss/actions/workflows/build-and-tag.yml) [![publish NPM](https://github.com/bbonkr/css-to-jss/actions/workflows/publish-npm.yml/badge.svg)](https://github.com/bbonkr/css-to-jss/actions/workflows/publish-npm.yml)
 
 Make JSS component `(jsx|tsx)` file from CSS file in your project.
 
