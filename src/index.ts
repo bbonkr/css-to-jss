@@ -1,9 +1,8 @@
-#!/usr/bin/env node
-
 import { Command } from 'commander';
 import { OptionParser } from './OptionParser';
 import { ListAction } from './ListAction';
 import { WriteAction } from './WriteAction';
+import packageJson from '../package.json';
 
 const app = new Command('css-to-jss');
 
@@ -59,7 +58,7 @@ writerCommand
         writer.invoke();
     });
 
-app.version('v1.2.0', '-v, --version', 'Display version')
+app.version(`v${packageJson.version}`, '-v, --version', 'Display version')
     .description('Make JSS React Component from CSS files.')
     .helpOption(false)
     .allowUnknownOption(false)

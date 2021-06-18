@@ -2,7 +2,9 @@ __test__/
 src/
 .jest/
 sample/
+.babelrc
 .eslintignore
 .eslintrc
 .prettierrc
 tsconfig.json
+webpack.config.js
